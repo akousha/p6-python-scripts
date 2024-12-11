@@ -1,7 +1,7 @@
 import requests
 from requests.auth import HTTPBasicAuth
-import pandas as pd
 import os
+import json
 
 # Set the URL and credentials
 base_url = "https://ca1.p6.oraclecloud.com/metrolinx/cloudapi/restapi"
@@ -117,22 +117,12 @@ if roles_data:
                     if roles & user_roles:
                         app_data[app_name].append(user_info)
 
-        # Check for empty data
-        for app_name, users in app_data.items():
-            print(f"Application: {app_name}, Number of users: {len(users)}")
-            if len(users) > 0:
-                print(users[0])  # Print the first user for a quick check
+        # Save data to JSON
+        json_file_path = os.path.join(save_directory, "active_users_by_application.json")
+        with open(json_file_path, "w") as json_file:
+            json.dump(app_data, json_file, indent=4)
         
-        # Save data to Excel
-        excel_file_path = os.path.join(save_directory, "Active_Users_By_Application.xlsx")
-        print(f"Saving Excel file to: {excel_file_path}")  # Debugging line
-        with pd.ExcelWriter(excel_file_path, engine='xlsxwriter') as writer:
-            for app_name, users in app_data.items():
-                if users:
-                    df = pd.DataFrame(users)
-                    df.to_excel(writer, sheet_name=app_name, index=False)
-        
-        print(f"Data saved to {excel_file_path}")
+        print(f"Data saved to {json_file_path}")
 
 else:
     print("Failed to retrieve roles or users.")
