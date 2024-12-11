@@ -36,8 +36,9 @@ jobs:
         run: |
           git config --local user.email "akousha@torontomu.ca"
           git config --local user.name "Arman Kousha"
+          git pull --rebase origin main
           git add Active_Users_By_Application.xlsx
-          git commit -m "Add generated Excel file"
-          git push
+          git commit -m "Add generated Excel file" || echo "No changes to commit"
+          git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
